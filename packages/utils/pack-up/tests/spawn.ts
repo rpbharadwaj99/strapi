@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto';
 import { mkdir, rm, readdir, stat as fsStat, copyFile } from 'fs/promises';
 import path from 'path';
 
-const workspace = async () => {
+const createWorkspace = async () => {
   const key = randomUUID();
 
   const workspacePath = path.resolve(__dirname, '__tmp__', key);
@@ -107,8 +107,8 @@ interface Project {
   run: (cmd: string) => Promise<{ stdout: string; stderr: string }>;
 }
 
-export const spawn = async (projectName: string): Promise<Project> => {
-  const { path: tmpPath, remove: tmpRemove } = await workspace();
+const spawn = async (projectName: string): Promise<Project> => {
+  const { path: tmpPath, remove: tmpRemove } = await createWorkspace();
 
   const packagePath = path.resolve(__dirname, '..', 'examples', projectName);
 
@@ -131,8 +131,10 @@ export const spawn = async (projectName: string): Promise<Project> => {
  * Remove all the tmp folder and everything in it.
  * Great for when it all goes wrong.
  */
-export const cleanup = async () => {
+const cleanup = async () => {
   const workspacePath = path.resolve(__dirname, `__tmp__`);
 
   return rm(workspacePath, { recursive: true, force: true });
 };
+
+export { createWorkspace, cleanup, spawn };

@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { program } from 'commander';
 
 import { version } from '../../package.json';
+import { loadTemplate } from '../node/templates/load';
 
 const command = (name: string) =>
   program
@@ -24,11 +25,13 @@ command('build')
     return build(options);
   });
 
-command('init').action(async (options) => {
-  const { init } = await import('./commands/init');
+command('init [path]')
+  .option('--template', 'path to a custom template')
+  .action(async (options) => {
+    const { init } = await import('./commands/init');
 
-  return init(options);
-});
+    return init(options);
+  });
 
 command('watch').action(async (options) => {
   const { watch } = await import('./commands/watch');
